@@ -1,0 +1,1 @@
+/Users/pentaminds_mac01/Desktop/AttendanceSystemCLI/android/app/build/intermediates/cxx/Debug/6f69525t/obj/x86

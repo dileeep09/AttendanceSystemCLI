@@ -1,0 +1,44 @@
+{
+  "name": "attendance-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "bootstrap:native": "bash ./scripts/bootstrap-native.sh",
+    "configure:native": "bash ./scripts/configure-native.sh"
+  },
+  "dependencies": {
+    "@react-native-community/geolocation": "^3.4.0",
+    "@react-native-community/netinfo": "12.0.1",
+    "@react-native-vector-icons/ionicons": "13.1.4",
+    "@react-navigation/bottom-tabs": "7.19.1",
+    "@react-navigation/native": "7.4.1",
+    "@react-navigation/native-stack": "7.19.1",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-config": "^1.7.2",
+    "react-native-maps": "1.27.2",
+    "react-native-mmkv": "4.3.2",
+    "react-native-nitro-modules": "0.37.1",
+    "react-native-safe-area-context": "5.6.2",
+    "react-native-screens": "4.18.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@react-native-community/cli": "^20.0.0",
+    "@react-native-community/cli-platform-android": "^20.0.0",
+    "@react-native-community/cli-platform-ios": "^20.0.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/metro-config": "^0.86.0",
+    "@types/react": "~19.2.0",
+    "@types/react-native": "^0.73.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "eslint": "^9.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "~5.9.2"
+  }
+}

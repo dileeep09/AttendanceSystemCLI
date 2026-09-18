@@ -1,0 +1,25 @@
+node_modules/
+.expo/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# React Native
+node_modules/
+android/.gradle/
+android/build/
+android/app/build/
+ios/Pods/
+ios/build/
+*.xcuserstate
+DerivedData/
+
+# Metro
+.metro-health-check*
+
+# Environment files
+.env
+.env.*
+!.env.example
