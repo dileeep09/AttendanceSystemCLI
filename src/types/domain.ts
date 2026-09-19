@@ -22,9 +22,14 @@ export type BuildingConfig = {
 export type AttendanceRecord = {
   id: string;
   checkedInAt: string;
+  checkedOutAt?: string;
+  totalDurationMs?: number;
   location: Coordinates;
   distanceMeters: number;
   accuracyMeters: number | null;
+  checkOutLocation?: Coordinates;
+  checkOutDistanceMeters?: number;
+  checkOutAccuracyMeters?: number | null;
 };
 
 export type LocationStatus =
@@ -34,4 +39,5 @@ export type LocationStatus =
   | 'permission-denied'
   | 'gps-disabled'
   | 'unavailable'
+  | 'timeout'
   | 'error';

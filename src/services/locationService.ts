@@ -7,6 +7,8 @@ import { LocationSnapshot } from '@types/domain';
 export type LocationPermissionResult = {
   granted: boolean;
   servicesEnabled: boolean;
+  errorCode?: number;
+  errorMessage?: string;
 };
 
 function mapPosition(position: GeolocationResponse): LocationSnapshot {
@@ -18,17 +20,32 @@ function mapPosition(position: GeolocationResponse): LocationSnapshot {
   };
 }
 
+function getErrorMessage(error: GeolocationError): string {
+  if (error.message) return error.message;
+
+  switch (error.code) {
+    case 1:
+      return 'Location permission was denied.';
+    case 2:
+      return 'Your device could not determine a location.';
+    case 3:
+      return 'Location request timed out.';
+    default:
+      return 'Unable to determine your current location.';
+  }
+}
+
 export async function requestLocationAccess(): Promise<LocationPermissionResult> {
   return new Promise(resolve => {
     Geolocation.getCurrentPosition(
       () => resolve({ granted: true, servicesEnabled: true }),
       (error: GeolocationError) => {
-        console.log("errorcode",error)
-        if (error.code === 1) {
-          resolve({ granted: false, servicesEnabled: true });
-          return;
-        }
-        resolve({ granted: false, servicesEnabled: error.code !== 2 });
+        resolve({
+          granted: error.code !== 1,
+          servicesEnabled: error.code !== 2,
+          errorCode: error.code,
+          errorMessage: getErrorMessage(error),
+        });
       },
       { enableHighAccuracy: false, timeout: 30000, maximumAge: 0 },
     );
@@ -49,8 +66,12 @@ export async function getCurrentLocation(): Promise<LocationSnapshot> {
   return new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
       position => resolve(mapPosition(position)),
-      error => reject(new Error(error.message || 'Unable to determine current location')),
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 5000 },
+      error => {
+        const locationError = new Error(getErrorMessage(error));
+        locationError.name = `LocationError_${error.code}`;
+        reject(locationError);
+      },
+      { enableHighAccuracy: false, timeout: 30000, maximumAge: 5000 },
     );
   });
 }
@@ -61,8 +82,19 @@ export function watchLocation(
 ): number {
   return Geolocation.watchPosition(
     position => onLocation(mapPosition(position)),
-    error => onError(new Error(error.message || 'Unable to watch location')),
-    { enableHighAccuracy: false, distanceFilter: 5, interval: 5000, fastestInterval: 3000 },
+    error => {
+      const locationError = new Error(getErrorMessage(error));
+      locationError.name = `LocationError_${error.code}`;
+      onError(locationError);
+    },
+    {
+      enableHighAccuracy: false,
+      distanceFilter: 5,
+      interval: 5000,
+      fastestInterval: 3000,
+      timeout: 30000,
+      maximumAge: 5000,
+    },
   );
 }
 

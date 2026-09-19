@@ -312,6 +312,14 @@
 		},
 		{
 			"backtrace" : 4,
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+		},
+		{
+			"backtrace" : 4,
 			"id" : "react_codegen_RNCNetInfoSpec::@c36c96bfd5b5770618a5"
 		},
 		{
@@ -329,14 +337,6 @@
 		{
 			"backtrace" : 4,
 			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
 		}
 	],
 	"id" : "appmodules::@6890427a1f51a3e7e1df",

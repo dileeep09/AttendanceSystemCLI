@@ -1,6 +1,19 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { colors, spacing, typography } from '@theme/index';
+
+type PrimaryButtonProps = {
+  title: string;
+  onPress: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  variant?: 'primary' | 'secondary' | 'danger';
+};
 
 export default function PrimaryButton({
   title,
@@ -8,31 +21,49 @@ export default function PrimaryButton({
   disabled = false,
   loading = false,
   variant = 'primary',
-}: {
-  title: string;
-  onPress: () => void;
-  disabled?: boolean;
-  loading?: boolean;
-  variant?: 'primary' | 'secondary' | 'danger';
-}) {
-  const backgroundColor = variant === 'danger' ? colors.danger : variant === 'secondary' ? colors.surface : colors.primary;
-  const textColor = variant === 'secondary' ? colors.text : colors.white;
+}: PrimaryButtonProps) {
+  const backgroundColor =
+    variant === 'danger'
+      ? colors.danger
+      : variant === 'secondary'
+        ? colors.surface
+        : colors.primary;
+
+  const textColor =
+    variant === 'secondary' ? colors.text : colors.white;
+
+  const isDisabled = disabled || loading;
 
   return (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.8}
       accessibilityRole="button"
-      accessibilityState={{ disabled: disabled || loading }}
-      disabled={disabled || loading}
+      accessibilityState={{
+        disabled: isDisabled,
+        busy: loading,
+      }}
+      disabled={isDisabled}
       onPress={onPress}
-      style={({ pressed }) => [
+      style={[
         styles.button,
-        { backgroundColor, borderColor: variant === 'secondary' ? colors.border : backgroundColor },
-        (disabled || loading) && styles.disabled,
-        pressed && !disabled && !loading && styles.pressed,
+        {
+          backgroundColor,
+          borderColor:
+            variant === 'secondary'
+              ? colors.border
+              : backgroundColor,
+        },
+        isDisabled && styles.disabled,
       ]}
     >
-      {loading ? <ActivityIndicator color={textColor} /> : <Text style={[styles.text, { color: textColor }]}>{title}</Text>}
-    </Pressable>
+      {loading ? (
+        <ActivityIndicator color={textColor} />
+      ) : (
+        <Text style={[typography.button, { color: textColor }]}>
+          {title}
+        </Text>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -44,8 +75,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
+    marginVertical: 12,
   },
-  text: typography.button,
-  disabled: { opacity: 0.45 },
-  pressed: { transform: [{ scale: 0.99 }] },
+  disabled: {
+    opacity: 0.45,
+  },
 });

@@ -6,7 +6,7 @@ import Card from '@globalComponents/Card';
 import Screen from '@globalComponents/Screen';
 import { useAppData } from '@contexts/AppDataContext';
 import { colors, spacing, typography } from '@theme/index';
-import { formatDateTime, formatDistance } from '@utils/format';
+import { formatDateTime, formatDistance, formatDurationShort, formatTime } from '@utils/format';
 
 export default function HistoryScreen() {
   const { attendance } = useAppData();
@@ -17,7 +17,8 @@ export default function HistoryScreen() {
     if (!normalized) return attendance;
     return attendance.filter(record =>
       formatDateTime(record.checkedInAt).toLowerCase().includes(normalized) ||
-      formatDistance(record.distanceMeters).toLowerCase().includes(normalized),
+      formatDistance(record.distanceMeters).toLowerCase().includes(normalized) ||
+      (record.checkedOutAt ? formatDateTime(record.checkedOutAt).toLowerCase().includes(normalized) : false),
     );
   }, [attendance, query]);
 
@@ -26,7 +27,7 @@ export default function HistoryScreen() {
       <View style={styles.header}>
         <Text style={styles.eyebrow}>HISTORY</Text>
         <Text style={styles.title}>Attendance records</Text>
-        <Text style={styles.subtitle}>{attendance.length} locally stored check-in{attendance.length === 1 ? '' : 's'}</Text>
+        <Text style={styles.subtitle}>{attendance.length} locally stored session{attendance.length === 1 ? '' : 's'}</Text>
       </View>
 
       <View style={styles.search}><SearchInput value={query} onChangeText={setQuery} placeholder="Search attendance" /></View>
@@ -40,16 +41,24 @@ export default function HistoryScreen() {
           <Card>
             <Ionicons name="calendar-outline" size={28} color={colors.textSecondary} />
             <Text style={styles.emptyTitle}>{query ? 'No matching records' : 'No attendance yet'}</Text>
-            <Text style={styles.emptyText}>{query ? 'Try a different search term.' : 'Once you check in, your attendance will appear here.'}</Text>
+            <Text style={styles.emptyText}>{query ? 'Try a different search term.' : 'Once you clock in, your attendance will appear here.'}</Text>
           </Card>
         }
         renderItem={({ item, index }) => (
           <Card style={styles.record}>
-            <View style={styles.iconBox}><Ionicons name="checkmark-circle" size={22} color={colors.success} /></View>
+            <View style={[styles.iconBox, item.checkedOutAt ? styles.completedIcon : styles.activeIcon]}>
+              <Ionicons name={item.checkedOutAt ? 'checkmark-circle' : 'time'} size={22} color={item.checkedOutAt ? colors.success : colors.primary} />
+            </View>
             <View style={styles.recordCopy}>
-              <Text style={styles.recordTitle}>Checked in</Text>
-              <Text style={styles.recordDate}>{formatDateTime(item.checkedInAt)}</Text>
-              <Text style={styles.recordMeta}>{formatDistance(item.distanceMeters)} from office · GPS {item.accuracyMeters ? `±${Math.round(item.accuracyMeters)}m` : '—'}</Text>
+              <Text style={styles.recordTitle}>{item.checkedOutAt ? 'Completed' : 'Active session'}</Text>
+              <Text style={styles.recordDate}>{formatTime(item.checkedInAt)}{item.checkedOutAt ? ` – ${formatTime(item.checkedOutAt)}` : ' – In progress'}</Text>
+              <Text style={styles.recordMeta}>
+                {item.totalDurationMs !== undefined ? `Worked ${formatDurationShort(item.totalDurationMs)}` : `Started ${formatDateTime(item.checkedInAt)}`}
+                {' · '}{formatDistance(item.distanceMeters)} from office
+              </Text>
+              <Text style={styles.recordMeta}>
+                GPS {item.accuracyMeters ? `±${Math.round(item.accuracyMeters)}m` : '—'}
+              </Text>
             </View>
             <Text style={styles.index}>#{attendance.length - index}</Text>
           </Card>
@@ -68,7 +77,9 @@ const styles = StyleSheet.create({
   list: { padding: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xxxl },
   emptyList: { padding: spacing.lg, paddingTop: spacing.md },
   record: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
-  iconBox: { width: 42, height: 42, borderRadius: 12, backgroundColor: colors.successSoft, alignItems: 'center', justifyContent: 'center' },
+  iconBox: { width: 42, height: 42, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  completedIcon: { backgroundColor: colors.successSoft },
+  activeIcon: { backgroundColor: colors.infoSoft },
   recordCopy: { flex: 1, marginLeft: spacing.md },
   recordTitle: { ...typography.bodyMedium, color: colors.text },
   recordDate: { ...typography.body, color: colors.textSecondary, marginTop: 2 },

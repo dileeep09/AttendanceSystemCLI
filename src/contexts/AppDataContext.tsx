@@ -8,6 +8,7 @@ const AppDataContext = createContext<{
   attendance: AttendanceRecord[];
   saveBuilding: (config: BuildingConfig) => void;
   addAttendance: (record: AttendanceRecord) => void;
+  updateAttendance: (record: AttendanceRecord) => void;
 } | null>(null);
 
 export function AppDataProvider({ children }: React.PropsWithChildren) {
@@ -23,9 +24,13 @@ export function AppDataProvider({ children }: React.PropsWithChildren) {
     setAttendance(previous => [record, ...previous.filter(item => item.id !== record.id)]);
   }, []);
 
+  const updateAttendance = useCallback((record: AttendanceRecord) => {
+    setAttendance(previous => previous.map(item => item.id === record.id ? record : item));
+  }, []);
+
   const value = useMemo(
-    () => ({ building, attendance, saveBuilding, addAttendance }),
-    [attendance, building, saveBuilding, addAttendance],
+    () => ({ building, attendance, saveBuilding, addAttendance, updateAttendance }),
+    [attendance, building, saveBuilding, addAttendance, updateAttendance],
   );
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
