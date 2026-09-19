@@ -3,8 +3,8 @@ import { STORAGE_KEYS } from './mmkv';
 import { readJson, writeJson } from './jsonStorage';
 
 const DEFAULT_CONFIG: BuildingConfig = {
-  companyName: 'Acme Technologies',
-  buildingName: 'Acme Tower',
+  companyName: 'Capsitech IT Services',
+  buildingName: 'Capsitech Tower',
   address: 'Configure your office address',
   location: { latitude: 28.6139, longitude: 77.209 },
   geofenceRadiusMeters: 100,
